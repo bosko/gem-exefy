@@ -1,0 +1,74 @@
+= gem-exefy
+
+code :: http://github.com/bosko/gem-exefy
+bugs :: http://github.com/bosko/gem-exefy/issues
+
+== DESCRIPTION:
+
+GemExefy is RubyGems plugin aimed to replace batch files (.bat) with executables with same name.
+
+Rationale behind this is described in this message https://groups.google.com/forum/?fromgroups#!topic/rubyinstaller/fQCuPfiuuRc
+
+GemExefy searches following directories for batch files
+
+- Gem.bindir
+- Gem.path
+
+Since Gem::path array contains directories pointing to the top level directory and executables are saved in the Gem#bindir folder, GemExefy concatenates directory from Gem.path with value of Gem#bindir (bin directory defined in the target Gem) and name from Gem#executables array with .bat extension. If such file is found it is replaced with corresponding executable file with same name and .exe extension.
+
+Backup of old batch files will be made if '-b' option is used. Otherwise they will be deleted.
+
+== FEATURES/PROBLEMS:
+
+* No known problems at the moment
+
+== SYNOPSIS:
+
+  C:\> gem exefy <gem_name>
+
+or:
+  
+  C:\> gem exefy <gem_name> -b
+
+== REQUIREMENTS:
+
+* RubyInstaller Ruby version
+* RubyInstaller's DevKit
+
+== INSTALL:
+
+* gem install gem-exefy
+
+== DEVELOPERS:
+
+After checking out the source, run:
+
+  $ rake newb
+
+This task will install any missing dependencies, run the tests/specs,
+and generate the RDoc.
+
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2012 FIX
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
