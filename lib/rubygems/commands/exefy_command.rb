@@ -13,6 +13,13 @@ module Gem
       end
 
       def execute
+        begin
+          require "devkit"
+        rescue LoadError
+          say "You must have DevKit installed in order to exefy gems"
+          return
+        end
+
         unless RUBY_PLATFORM =~ /mingw/
           say "This command can be executed only on Windows OS"
           return
