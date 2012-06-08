@@ -24,15 +24,16 @@ dump_args(int argc, char **argv)
 int
 main(int argc, char **argv)
 {
-#ifdef HAVE_LOCALE_H
-  setlocale(LC_CTYPE, "");
-#endif
-
   int i;
   int myargc;
   char** myargv;
   char script_path[MAXPATHLEN];
   char* dump_val;
+  DWORD attr;
+
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_CTYPE, "");
+#endif
 
   dump_val = getenv("EXEFY_DUMP");
 
@@ -44,7 +45,7 @@ main(int argc, char **argv)
       }
     }
 
-    DWORD attr = GetFileAttributes(script_path);
+    attr = GetFileAttributes(script_path);
     if (attr == INVALID_FILE_ATTRIBUTES) {
       printf("Script %s is missing!", script_path);
       return -1;
