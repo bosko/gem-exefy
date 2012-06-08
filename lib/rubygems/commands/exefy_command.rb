@@ -28,8 +28,8 @@ module Gem
         get_all_gem_names.each do |name|
           begin
             cur_gem = Gem::Specification.find_by_name(name)
-            batch_files(cur_gem).each do |k,v|
-              generate_exe(k, v)
+            batch_files(cur_gem).each do |_, list|
+              process(list)
             end
           rescue Gem::LoadError => e
             say "Cannot exefy. Gem #{name} not found"
@@ -51,29 +51,52 @@ module Gem
         bf
       end
 
-      def generate_exe(executable, batch_files)
-        log_message "Generating exe file"
+      def process(batch_files)
+        unless File.executable?(executable)
+          generate_executable
+        end
 
-        exefier_src_path = File.join(File.expand_path("../../../templates", __FILE__), "gem_exe.c")
-        Dir.mktmpdir do |build_dir|
-          # First create executable for all batch files (it is same .exe file but
-          # batch files are found in different directories).
-          targets = Hash[*['c', 'o', 'exe'].map { |ext| [ext, File.join(build_dir, "#{executable}.#{ext}")]}.flatten]
-          FileUtils.cp exefier_src_path, targets["c"]
-          compile(targets["c"], targets["o"])
-          link(targets["o"], targets["exe"])
+        batch_files.each do |bf|
+          target = bf.gsub(".bat", ".exe")
 
-          batch_files.each do |bf|
-            log_message "Copying '#{File.basename(targets["exe"])}' file into #{File.dirname(bf)}..."
-            FileUtils.cp targets["exe"], File.dirname(bf)
-            if options[:backup_batch_files]
-              log_message "Creating backup of '#{File.basename(bf)}' batch file"
-              File.rename(bf, "#{bf}.bcp")
-            else
-              log_message "Removing batch file '#{File.basename(bf)}'"
-              File.unlink bf
-            end
+          log_message "Copying executable as '#{File.basename(target)}' file into #{File.dirname(bf)}..."
+          FileUtils.install executable, target
+
+          if options[:backup_batch_files]
+            log_message "Creating backup of '#{File.basename(bf)}' batch file"
+            File.rename(bf, "#{bf}.bcp")
+          else
+            log_message "Removing batch file '#{File.basename(bf)}'"
+            File.unlink bf
           end
+        end
+      end
+
+      def executable
+        return @executable if defined?(@executable)
+
+        gem_root = File.expand_path("../../../..", __FILE__)
+        @executable = File.join(gem_root, "data", "gemstub.exe")
+      end
+
+      def generate_executable
+        log_message "Generating executable '#{executable}'..."
+
+        gem_root = File.expand_path("../../../..", __FILE__)
+        template = File.join(gem_root, "templates", "gem_exe.c")
+
+        Dir.mktmpdir do |build_dir|
+          base = File.basename(template)
+          obj  = File.join(build_dir, base.gsub(".c", ".o"))
+          exe  = File.join(build_dir, base.gsub(".c", ".exe"))
+
+          compile(template, obj)
+          link(obj, exe)
+
+          # verify target directory first exists
+          FileUtils.mkdir_p File.dirname(executable)
+
+          FileUtils.install exe, executable
         end
       end
 
