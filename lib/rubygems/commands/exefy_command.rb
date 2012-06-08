@@ -32,7 +32,9 @@ module Gem
 
       def batch_files(gem)
         bf = {}
-        test_paths = Gem.path.map {|gp| File.join(gp, gem.bindir)}.unshift(Gem.bindir)
+        test_paths = Gem.path.map {|gp| File.join(gp, gem.bindir)}.
+                      unshift(Gem.bindir).uniq
+
         gem.executables.each do |executable|
           test_paths.map {|tp| File.join(tp, "#{executable}.bat")}.each do |bat|
             bf[executable] = [] unless bf[executable]
@@ -55,13 +57,14 @@ module Gem
           link(targets["o"], targets["exe"])
 
           batch_files.each do |bf|
-            log_message "Copying exe file to #{File.dirname(bf)}..."
+            log_message "Copying '#{File.basename(targets["exe"])}' file into #{File.dirname(bf)}..."
             FileUtils.cp targets["exe"], File.dirname(bf)
             if options[:backup_batch_files]
-              log_message "Creating backup of old batch file"
+              log_message "Creating backup of '#{File.basename(bf)}' batch file"
               File.rename(bf, "#{bf}.bcp")
             else
-              File.rm bf
+              log_message "Removing batch file '#{File.basename(bf)}'"
+              File.unlink bf
             end
           end
         end
