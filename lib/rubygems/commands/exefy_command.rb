@@ -61,7 +61,7 @@ module Gem
               log_message "Creating backup of old batch file"
               File.rename(bf, "#{bf}.bcp")
             else
-              File.rm bf
+              File.unlink bf
             end
           end
         end
