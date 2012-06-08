@@ -32,7 +32,9 @@ module Gem
 
       def batch_files(gem)
         bf = {}
-        test_paths = Gem.path.map {|gp| File.join(gp, gem.bindir)}.unshift(Gem.bindir)
+        test_paths = Gem.path.map {|gp| File.join(gp, gem.bindir)}.
+                      unshift(Gem.bindir).uniq
+
         gem.executables.each do |executable|
           test_paths.map {|tp| File.join(tp, "#{executable}.bat")}.each do |bat|
             bf[executable] = [] unless bf[executable]
