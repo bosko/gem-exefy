@@ -1,21 +1,32 @@
-require 'rubygems'
-require 'rubygems/user_interaction'
-
 module Exefy
+  require 'rubygems'
+  require 'rubygems/user_interaction'
+  require 'tmpdir'
+  require 'devkit'
+
   def self.process_existing_gem(gem, options)
-    @generator = GeneratorFromBatch.new(gem, options)
-    @generator.exefy_gem
+    generator = GeneratorFromBatch.new(gem, options)
+    generator.exefy_gem
+  end
+
+  def self.process_gem_install(target_path)
+    generator = Generator.new(target_path)
+    generator.exefy_gem
   end
 
   class Generator
     include Gem::UserInteraction
 
-    def initialize(gem, options)
-      return Exception.new "Dummy"
+    def initialize(target_path)
+      @exe_target = target_path
+    end
+
+    def exefy_gem
+      process
     end
 
     def process
-      raise Exception.new "Dummy"
+      install_executable_stub(@exe_target)
     end
 
     def install_executable_stub(target)
@@ -30,7 +41,7 @@ module Exefy
     def executable
       return @executable if defined?(@executable)
 
-      gem_root = File.expand_path("../../../..", __FILE__)
+      gem_root = File.expand_path("../..", __FILE__)
       @executable = File.join(gem_root, "data", "gemstub.exe")
     end
 
