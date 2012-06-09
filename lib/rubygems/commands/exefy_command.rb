@@ -76,7 +76,8 @@ module Gem
         return @executable if defined?(@executable)
 
         gem_root = File.expand_path("../../../..", __FILE__)
-        @executable = File.join(gem_root, "data", "gemstub.exe")
+        ruby_version = RbConfig::CONFIG["ruby_version"]
+        @executable = File.join(gem_root, "data", ruby_version, "gemstub.exe")
       end
 
       def generate_executable
@@ -93,7 +94,7 @@ module Gem
           compile(template, obj)
           link(obj, exe)
 
-          # verify target directory first exists
+          # verify target directory exists first
           FileUtils.mkdir_p File.dirname(executable)
 
           FileUtils.install exe, executable
