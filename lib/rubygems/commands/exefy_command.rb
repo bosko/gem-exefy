@@ -1,4 +1,5 @@
 require "rubygems/command"
+require "rbconfig"
 require "tmpdir"
 
 module Gem
