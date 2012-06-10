@@ -3,6 +3,6 @@ History.rdoc
 Manifest.txt
 README.rdoc
 Rakefile
-lib/rubygems_plugin.rb
 lib/rubygems/commands/exefy_command.rb
-lib/templates/gem_exe.c
+lib/rubygems_plugin.rb
+templates/gem_exe.c
