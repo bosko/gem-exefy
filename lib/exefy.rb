@@ -70,7 +70,7 @@ module Exefy
       cflags = RbConfig::CONFIG["CFLAGS"]
       cppflags = RbConfig::CONFIG["CPPFLAGS"]
 
-      hdr_dir = RbConfig::CONFIG["rubyhdrdir"]
+      hdr_dir = RbConfig::CONFIG["rubyhdrdir"] || RbConfig::CONFIG["includedir"]
       arch_dir = RbConfig::CONFIG["arch"]
 
       include_dirs = "-I#{hdr_dir}/#{arch_dir} -I#{hdr_dir}"
