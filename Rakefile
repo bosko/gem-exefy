@@ -17,6 +17,8 @@ Hoe.spec 'gem-exefy' do
 
   Thank you for installing #{self.name}-#{self.version}!
 
+  This gem will work only on RubyInstaller versions of Ruby with installed DevKit.
+
 **************************************************}
 end
 
