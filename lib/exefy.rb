@@ -115,7 +115,7 @@ module Exefy
 
         if @options[:backup_batch_files]
           log_message "Creating backup of '#{File.basename(bf)}' batch file"
-          File.rename(bf, "#{bf}.bcp")
+          File.rename(bf, "#{bf}.orig")
         else
           log_message "Removing batch file '#{File.basename(bf)}'"
           File.unlink bf
