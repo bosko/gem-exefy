@@ -6,7 +6,7 @@ module Gem
   module Commands
     class ExefyCommand < Gem::Command
       def initialize
-        super 'exefy', "Replaces Gem's batch file with executable file (Windows only)"
+        super 'exefy', "Replaces Gem's batch file with executable file (RubyInstaller installation only)"
         add_option('-b', '--backup-batch-files', 
                'Keep backup of old batch files') do |value, options|
           options[:backup_batch_files] = value
@@ -22,7 +22,7 @@ module Gem
         end
 
         unless RUBY_PLATFORM =~ /mingw/
-          say "This command can be executed only on Windows OS"
+          say "This command can be executed only on RubyInstaller Windows OS installation"
           return
         end
 
