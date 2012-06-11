@@ -13,6 +13,7 @@ Hoe.spec 'gem-exefy' do
   self.extra_rdoc_files = FileList['*.rdoc']
   self.require_rubygems_version(">= 1.8.0")
   self.version = "0.0.1"
+  spec_extras[:platform] = Gem::Platform::CURRENT
   self.post_install_message = %Q{**************************************************
 
   Thank you for installing #{self.name}-#{self.version}!
