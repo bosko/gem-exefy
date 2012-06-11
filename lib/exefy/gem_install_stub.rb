@@ -10,7 +10,7 @@ module Exefy::StubOverride
       exe_path = File.join bindir, File.basename(exe_name)
       Exefy.process_gem_install(exe_path)
 
-      say exe_path if Gem.configuration.really_verbose
+      say "Installed #{exe_path} executable" if Gem.configuration.really_verbose
     end
   end
 end
