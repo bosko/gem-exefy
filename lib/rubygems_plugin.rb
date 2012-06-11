@@ -23,3 +23,59 @@ Gem.pre_install do |installer|
     alias_method :generate_windows_script, :generate_exe_file
   end
 end
+
+Gem.pre_uninstall do |uninstaller|
+  class << uninstaller
+    def remove_executables_and_exe_file(spec)
+      return if spec.nil? or spec.executables.empty?
+
+      list = Gem::Specification.find_all { |s|
+        s.name == spec.name && s.version != spec.version
+      }
+
+      executables = spec.executables.clone
+
+      list.each do |s|
+        s.executables.each do |exe_name|
+          executables.delete exe_name
+        end
+      end
+
+      return if executables.empty?
+
+      executables = executables.map { |exec| formatted_program_filename exec }
+
+      remove = if @force_executables.nil? then
+                 ask_yes_no("Remove executables:\n" \
+                            "\t#{executables.join ', '}\n\n" \
+                            "in addition to the gem?",
+                            true)
+               else
+                 @force_executables
+               end
+
+      unless remove then
+        say "Executables and scripts will remain installed."
+      else
+        bin_dir = @bin_dir || Gem.bindir(spec.base_dir)
+
+        raise Gem::FilePermissionError, bin_dir unless File.writable? bin_dir
+
+        executables.each do |exe_name|
+          say "Removing #{exe_name}"
+
+          exe_file = File.join bin_dir, exe_name
+
+          FileUtils.rm_f exe_file
+          batch_file = "#{exe_file}.bat"
+          FileUtils.rm_f batch_file if File.exist?(batch_file)
+          generic_exe = "#{exe_file}.exe"
+          FileUtils.rm_f generic_exe if File.exist?(generic_exe)
+        end
+      end
+    end
+
+    alias_method :remove_executables_orig, :remove_executables
+    alias_method :remove_executables, :remove_executables_and_exe_file
+  end
+end
