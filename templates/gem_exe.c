@@ -58,22 +58,27 @@ main(int argc, char **argv)
     // name) and copying arguments from command line after it.
     myargc = argc + 1;
     myargv = (char**)xmalloc(sizeof(char*) * (myargc + 1));
-    memset(myargv, 0, sizeof(char*) * (myargc + 1));
-    *myargv = *argv;
-    *(myargv + 1) = &script_path[0];
+    if (NULL != myargv) {
+      memset(myargv, 0, sizeof(char*) * (myargc + 1));
+      *myargv = *argv;
+      *(myargv + 1) = &script_path[0];
 
-    for (i = 1; i < argc; ++i) {
-       *(myargv + i + 1) = *(argv + i);
+      for (i = 1; i < argc; ++i) {
+         *(myargv + i + 1) = *(argv + i);
+      }
+
+      if (NULL != dump_val) {
+        dump_args(myargc, myargv);
+      }
+
+      {
+        RUBY_INIT_STACK;
+        ruby_init();
+        return ruby_run_node(ruby_options(myargc, myargv));
+      }
     }
-
-    if (NULL != dump_val) {
-      dump_args(myargc, myargv);
-    }
-
-    {
-      RUBY_INIT_STACK;
-      ruby_init();
-      return ruby_run_node(ruby_options(myargc, myargv));
+    else {
+      printf("Not enough memory to continue. Exiting...");
     }
   }
 }
