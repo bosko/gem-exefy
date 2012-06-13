@@ -89,6 +89,7 @@ module Exefy
 
       cc = ENV.fetch("CC", RbConfig::CONFIG["CC"])
       system "#{cc} #{objs} -o #{target} #{libs_dir}"
+      system "strip #{target}"
     end
 
     def log_message(message)
