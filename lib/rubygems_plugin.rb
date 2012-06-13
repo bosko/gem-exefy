@@ -4,26 +4,27 @@ Gem::CommandManager.instance.register_command :exefy
 
 Gem.pre_install do |installer|
   class << installer
-    begin
-      require 'exefy'
-      alias_method :generate_batch_file, :generate_windows_script
-      alias_method :generate_windows_script, :generate_exe_file
-    rescue LoadError
-      puts "You must have DevKit installed in order to exefy gems"
-    end
-
     def generate_exe_file(filename, bindir)
       if RUBY_PLATFORM =~ /mingw/
+        begin
+          require 'exefy'
 
-        exe_name = filename + ".exe"
-        exe_path = File.join bindir, File.basename(exe_name)
-        Exefy.process_gem_install(exe_path)
+          exe_name = filename + ".exe"
+          exe_path = File.join bindir, File.basename(exe_name)
+          Exefy.process_gem_install(exe_path)
 
-        say "Installed #{exe_path} executable" if Gem.configuration.really_verbose
+          say "Installed #{exe_path} executable" if Gem.configuration.really_verbose
+        rescue LoadError
+          puts "You must have DevKit installed in order to exefy gems"
+          generate_batch_file(filename, bindir)
+        end
       else
         generate_batch_file(filename, bindir)
       end
     end
+
+    alias_method :generate_batch_file, :generate_windows_script
+    alias_method :generate_windows_script, :generate_exe_file
   end
 end
 
