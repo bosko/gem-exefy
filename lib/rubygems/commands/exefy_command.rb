@@ -1,5 +1,4 @@
 require "rubygems/command"
-require 'exefy'
 
 module Gem
   module Commands
@@ -14,8 +13,8 @@ module Gem
 
       def execute
         begin
-          require "devkit"
-        rescue LoadError
+          require 'exefy'
+        rescue ::LoadError => load_error
           say "You must have DevKit installed in order to exefy gems"
           return
         end
