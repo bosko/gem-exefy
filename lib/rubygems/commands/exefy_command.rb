@@ -11,6 +11,14 @@ module Gem
         end
       end
 
+      def arguments
+        "GEMNAME       name of gem to exefy"
+      end
+
+      def usage # :nodoc:
+        "#{program_name} GEMNAME"
+      end
+
       def execute
         begin
           require 'exefy'
