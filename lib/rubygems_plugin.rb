@@ -7,7 +7,8 @@ Gem.pre_install do |installer|
     def generate_exe_file(filename, bindir)
       if RUBY_PLATFORM =~ /mingw/
         begin
-          require 'exefy'
+          require "devkit"
+          require "exefy"
 
           exe_name = filename + ".exe"
           exe_path = File.join bindir, File.basename(exe_name)

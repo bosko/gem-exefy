@@ -5,40 +5,58 @@ module Gem
     class ExefyCommand < Gem::Command
       def initialize
         super 'exefy', "Replaces Gem's batch file with executable file (RubyInstaller installation only)"
-        add_option('-b', '--backup-batch-files', 
-               'Keep backup of old batch files') do |value, options|
-          options[:backup_batch_files] = value
+
+        add_option('--all', 'Replaces batch files with executable file',
+               'for all installed gems') do |value, options|
+          options[:process_all_gems] = value
+        end
+
+        add_option('--revert', 'Restores batch files for given gem',
+               'or all gems if --all option is used') do |value, options|
+          options[:revert] = value
         end
       end
 
       def arguments
-        "GEMNAME       name of gem to exefy"
+        "GEMNAME       name of gem to exefy (unless --all)"
       end
 
       def usage # :nodoc:
-        "#{program_name} GEMNAME"
+        "#{program_name} [args]"
+      end
+
+      def description # :nodoc:
+        <<-EOS
+        EOS
       end
 
       def execute
-        begin
-          require 'exefy'
-        rescue ::LoadError => load_error
-          say "You must have DevKit installed in order to exefy gems"
-          return
-        end
-
         unless RUBY_PLATFORM =~ /mingw/
           say "This command can be executed only on RubyInstaller Windows OS installation"
           return
         end
 
-        get_all_gem_names.each do |name|
-          begin
-            cur_gem = Gem::Specification.find_by_name(name)
-            Exefy.process_existing_gem(cur_gem,options)
-          rescue Gem::LoadError => e
-            say "Cannot exefy. Gem #{name} not found"
-          end
+        begin
+          require "devkit" unless options[:revert]
+          require "exefy"
+        rescue ::LoadError => load_error
+          say "You must have DevKit installed in order to exefy gems"
+          return
+        end
+
+        gem_specs = if options[:process_all_gems] then
+                      Gem::Specification
+                    else
+                      begin
+                        gem_name = get_one_gem_name
+                        Gem::Specification.find_all_by_name(gem_name)
+                      rescue Gem::LoadError => e
+                        say "Cannot exefy. Gem #{name} not found"
+                      end
+                    end
+
+        gem_specs.each do |gem_spec|
+          Exefy.process_existing_gem(gem_spec, options[:revert])
         end
       end
     end

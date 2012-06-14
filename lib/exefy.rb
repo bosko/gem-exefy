@@ -2,11 +2,10 @@ module Exefy
   require 'rubygems'
   require 'rubygems/user_interaction'
   require 'tmpdir'
-  require 'devkit'
 
-  def self.process_existing_gem(gem, options)
-    generator = GeneratorFromBatch.new(gem, options)
-    generator.exefy_gem
+  def self.process_existing_gem(gem, revert)
+    generator = GeneratorFromBatch.new(gem)
+    revert ? generator.revert_gem : generator.exefy_gem
   end
 
   def self.process_gem_install(target_path)
@@ -98,9 +97,8 @@ module Exefy
   end
 
   class GeneratorFromBatch < Generator
-    def initialize(gem, options)
+    def initialize(gem)
       @gem = gem
-      @options = options
     end
 
     def exefy_gem
@@ -109,18 +107,41 @@ module Exefy
       end
     end
 
+    def revert_gem
+      require "rubygems/installer"
+
+      return if @gem.executables.nil? or @gem.executables.empty?
+
+      # Instantiate Gem::Installer object with no additional options
+      # WARNING!!! at the moment RubyGems do not handle additional
+      # install options correctly (--install-dir or --bindir). Once
+      # gem is installed in non-default location it becomes unusable.
+      # We cannot get path to its .bat files nor path where it is
+      # installed (https://github.com/rubygems/rubygems/issues/342).
+      # Therefore we will, for now, process gems as they are always
+      # installed in default locations.
+      @gem.executables.each do |filename|
+        filename.untaint
+        exe_file = File.join(Gem.bindir, "#{filename}.exe")
+        if File.exist? exe_file
+          Gem::Installer.new(@gem).generate_windows_script(filename, Gem.bindir)
+          if File.exist? exe_file.gsub(".exe", ".bat")
+            log_message "Removing #{exe_file}"
+            File.unlink exe_file
+          else
+            log_message "Reverting batch file failed. Executable file will remain in bin directory."
+          end
+        end
+      end
+    end
+
     def process(batch_files)
       batch_files.each do |bf|
         target = bf.gsub(".bat", ".exe")
         install_executable_stub(target)
 
-        if @options[:backup_batch_files]
-          log_message "Creating backup of '#{File.basename(bf)}' batch file"
-          File.rename(bf, "#{bf}.orig")
-        else
-          log_message "Removing batch file '#{File.basename(bf)}'"
-          File.unlink bf
-        end
+        log_message "Removing batch file '#{File.basename(bf)}'"
+        File.unlink bf
       end
     end
 
