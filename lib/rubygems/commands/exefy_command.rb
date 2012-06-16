@@ -27,6 +27,11 @@ module Gem
 
       def description # :nodoc:
         <<-EOS
+The exefy command replaces the default gem batch(.bat) script runner with
+an Windows executable(.exe) stub. Exefy also includes hooks that will
+automatically do this for all new Gem installs and removes the executable with
+a Gem uninstall.
+Requires a RubyInstaller Ruby installation and the RubyInstaller DevKit.
         EOS
       end
 
