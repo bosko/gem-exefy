@@ -4,7 +4,7 @@ module Gem
   module Commands
     class ExefyCommand < Gem::Command
       def initialize
-        super 'exefy', "Replaces Gem's batch file with executable file (RubyInstaller installation only)"
+        super 'exefy', "Replaces a Gem's batch script with a Windows executable"
 
         add_option('--all', 'Replaces batch files with executable file',
                'for all installed gems') do |value, options|
