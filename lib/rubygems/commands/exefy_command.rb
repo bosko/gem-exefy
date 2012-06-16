@@ -4,7 +4,7 @@ module Gem
   module Commands
     class ExefyCommand < Gem::Command
       def initialize
-        super 'exefy', "Replaces Gem's batch file with executable file (RubyInstaller installation only)"
+        super 'exefy', "Replaces a Gem's batch script with a Windows executable"
 
         add_option('--all', 'Replaces batch files with executable file',
                'for all installed gems') do |value, options|
@@ -27,6 +27,11 @@ module Gem
 
       def description # :nodoc:
         <<-EOS
+The exefy command replaces the default gem batch(.bat) script runner with
+an Windows executable(.exe) stub. Exefy also includes hooks that will
+automatically do this for all new Gem installs and will remove the executable
+with a Gem uninstall.
+Requires a RubyInstaller Ruby installation and the RubyInstaller DevKit.
         EOS
       end
 
