@@ -2,6 +2,7 @@ module Exefy
   require 'rubygems'
   require 'rubygems/user_interaction'
   require 'tmpdir'
+  require 'rbconfig'
 
   def self.process_existing_gem(gem, revert)
     generator = GeneratorFromBatch.new(gem)
@@ -40,8 +41,10 @@ module Exefy
     def executable
       return @executable if defined?(@executable)
 
-      gem_root = File.expand_path("../..", __FILE__)
-      @executable = File.join(gem_root, "data", "gemstub.exe")
+      gem_root     = File.expand_path("../..", __FILE__)
+      ruby_version = RbConfig::CONFIG["ruby_version"]
+
+      @executable = File.join(gem_root, "data", ruby_version, "gemstub.exe")
     end
 
     def generate_executable
