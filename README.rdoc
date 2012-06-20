@@ -5,18 +5,23 @@ bugs :: http://github.com/bosko/gem-exefy/issues
 
 == DESCRIPTION:
 
-GemExefy is RubyGems plugin aimed to replace batch files (.bat) with executables with same name.
+GemExefy is RubyGems plugin aimed to replace batch files (.bat) with executables with the same name. This gem will work only on RubyInstaller Ruby
+installation and it requires RubyInstaller DevKit.
 
-Rationale behind this is described in this message https://groups.google.com/forum/?fromgroups#!topic/rubyinstaller/fQCuPfiuuRc
+Reason for such replaceming batch files with executable stubs is twofold. When execution of batch file is interrupted with Ctrl-C key combination,
+user is faced with the confusing question "Terminate batch job (Y/N)?" which is avoided after replacement.
 
-GemExefy searches following directories for batch files
+Second reason is appearance of processes in Task manager (or Process Explorer). In the case of batch files all processes are visible as ruby.exe.
+In order to distinguish between them, program arguments must be examined. In addition, having one process name makes it hard to define firewall rules.
+Having executable versions instead of batch files will facilitate process identification in task list as well as defining firewall rules. Moreover it
+makes it possible to create selective firewall rules for different Ruby gems. Installing Ruby applications as Windows services should be also much easer
+when executable stub is used instead of batch file.
 
-- Gem.bindir
-- Gem.path
+=== How does it work?
 
-Since Gem::path array contains directories pointing to the top level directory and executables are saved in the Gem#bindir folder, GemExefy concatenates directory from Gem.path with value of Gem#bindir (bin directory defined in the target Gem) and name from Gem#executables array with .bat extension. If such file is found it is replaced with corresponding executable file with same name and .exe extension.
-
-Backup of old batch files will be made if '-b' option is used. Otherwise they will be deleted.
+If GemExefy is installed prior to other gems installation it will automatically install executable stub instead of each batch file that is normally
+created during gem installation. GemExefy enables replacement for existing gems too. Either all or one by one gem can be processed. Finally GemExefy can
+revert all changes and return all batch files instead of executable stubs if needed.
 
 == FEATURES/PROBLEMS:
 
@@ -24,11 +29,21 @@ Backup of old batch files will be made if '-b' option is used. Otherwise they wi
 
 == SYNOPSIS:
 
+Exefying single gem:
+
   C:\> gem exefy <gem_name>
 
-or:
-  
-  C:\> gem exefy <gem_name> -b
+Exefying all installed gems on the system:
+
+  C:\> gem exefy <gem_name> --all
+
+Reverting batch file for single gem:
+
+  C:\> gem exefy <gem_name> --revert
+
+Reverting batch files for all previously processed gems:
+
+  C:\> gem exefy <gem_name> --all --revert
 
 == REQUIREMENTS:
 
@@ -47,6 +62,13 @@ After checking out the source, run:
 
 This task will install any missing dependencies, run the tests/specs,
 and generate the RDoc.
+
+GemExefy searches following directories for batch files
+
+- Gem.bindir
+- Gem.path
+
+Since Gem::path array contains directories pointing to the top level directory and executables are saved in the Gem#bindir folder, GemExefy concatenates directory from Gem.path with value of Gem#bindir (bin directory defined in the target Gem) and name from Gem#executables array with .bat extension. If such file is found it is replaced with corresponding executable file with same name and .exe extension.
 
 == LICENSE:
 
