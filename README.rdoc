@@ -74,7 +74,7 @@ Since Gem::path array contains directories pointing to the top level directory a
 
 (The MIT License)
 
-Copyright (c) 2012 FIX
+Copyright (c) 2012 Boško Ivanišević
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
