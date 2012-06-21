@@ -1,0 +1,39 @@
+//#include "resource.h"
+#include <winver.h>
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION <%= binary_version %>
+ PRODUCTVERSION <%= binary_version %>
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS VOS_NT
+ FILETYPE VFT_APP
+ FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "Gem Executable Stub"
+            VALUE "FileVersion", "<%= VERSION %>"
+            VALUE "InternalName", "Gem ExeStub"
+            VALUE "LegalCopyright", "Copyright (C) 2012 Bosko Ivanisevic"
+            VALUE "OriginalFilename", "gemstub.exe"
+            VALUE "ProductName", "Gem Exefy"
+            VALUE "ProductVersion", "<%= VERSION %>"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

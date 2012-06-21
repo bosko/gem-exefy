@@ -6,4 +6,6 @@ Rakefile
 lib/rubygems/commands/exefy_command.rb
 lib/rubygems_plugin.rb
 lib/exefy.rb
+lib/version.rb
 templates/gem_exe.c
+templates/gem_exe.rc.erb

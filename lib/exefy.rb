@@ -3,6 +3,8 @@ module Exefy
   require 'rubygems/user_interaction'
   require 'tmpdir'
   require 'rbconfig'
+  require 'erb'
+  require 'version'
 
   def self.process_existing_gem(gem, revert)
     generator = GeneratorFromBatch.new(gem)
@@ -52,14 +54,20 @@ module Exefy
 
       gem_root = File.expand_path("../..", __FILE__)
       template = File.join(gem_root, "templates", "gem_exe.c")
+      res_template = File.join(gem_root, "templates", "gem_exe.rc.erb")
 
       Dir.mktmpdir do |build_dir|
         base = File.basename(template)
+        res_base = File.basename(res_template)
+
         obj  = File.join(build_dir, base.gsub(".c", ".o"))
+        res_src = File.join(build_dir, res_base.gsub(".erb", ""))
+        res_obj = File.join(build_dir, res_base.gsub(".erb", ".o"))
         exe  = File.join(build_dir, base.gsub(".c", ".exe"))
 
         compile(template, obj)
-        link(obj, exe)
+        compile_resources(res_template, res_src, res_obj)
+        link([obj, res_obj].join(" "), exe)
 
         # verify target directory first exists
         FileUtils.mkdir_p File.dirname(executable)
@@ -80,6 +88,16 @@ module Exefy
       cc = ENV.fetch("CC", RbConfig::CONFIG["CC"])
 
       system "#{cc} -c #{source} -o #{target} #{cflags} #{cppflags} #{include_dirs}"
+    end
+
+    def compile_resources(template, source, target)
+      binary_version = VERSION.gsub('.', ',') + ",0"
+      File.open source, "w" do |file|
+        erb = ERB.new File.read(template)
+        file.puts erb.result(binding)
+      end
+
+      system "windres #{source} -o #{target}"
     end
 
     def link(objs, target)
