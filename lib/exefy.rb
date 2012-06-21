@@ -4,7 +4,7 @@ module Exefy
   require 'tmpdir'
   require 'rbconfig'
   require 'erb'
-  require 'version'
+  require 'exefy/version'
 
   def self.process_existing_gem(gem, revert)
     generator = GeneratorFromBatch.new(gem)
@@ -91,7 +91,6 @@ module Exefy
     end
 
     def compile_resources(template, source, target)
-      ruby_version = RbConfig::CONFIG["ruby_version"]
       binary_version = VERSION.gsub('.', ',') + ",0"
       File.open source, "w" do |file|
         erb = ERB.new File.read(template)

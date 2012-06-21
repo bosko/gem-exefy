@@ -3,7 +3,7 @@
 
 require 'rubygems'
 require 'hoe'
-require './lib/version'
+require './lib/exefy/version'
 
 Hoe.spec 'gem-exefy' do
   developer('Boško Ivanišević', 'bosko.ivanisevic@gmail.com')

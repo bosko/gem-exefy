@@ -23,8 +23,8 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "Gem Executable Stub (built for Ruby <%= ruby_version %>)"
-            VALUE "Comments", "Stub is built for Ruby <%= ruby_version %> version."
+            VALUE "FileDescription", "Gem Executable Stub is built for <%= RUBY_DESCRIPTION %>"
+            VALUE "Comments", "Stub is built for <%= RUBY_DESCRIPTION %> version."
             VALUE "FileVersion", "<%= VERSION %>"
             VALUE "InternalName", "Gem ExeStub"
             VALUE "LegalCopyright", "Copyright (C) 2012 Bosko Ivanisevic"
