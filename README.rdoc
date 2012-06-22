@@ -35,7 +35,7 @@ Exefying single gem:
 
 Exefying all installed gems on the system:
 
-  C:\> gem exefy <gem_name> --all
+  C:\> gem exefy --all
 
 Reverting batch file for single gem:
 
@@ -43,7 +43,7 @@ Reverting batch file for single gem:
 
 Reverting batch files for all previously processed gems:
 
-  C:\> gem exefy <gem_name> --all --revert
+  C:\> gem exefy --all --revert
 
 == REQUIREMENTS:
 
