@@ -16,6 +16,19 @@ module Exefy
     generator.exefy_gem
   end
 
+  def self.executable
+    return @executable if defined?(@executable)
+
+    gem_root     = File.expand_path("../..", __FILE__)
+    ruby_version = RbConfig::CONFIG["ruby_version"]
+
+    @executable = File.join(gem_root, "data", ruby_version, "gemstub.exe")
+  end
+
+  def self.devkit_needed?
+    !File.executable?(Exefy.executable)
+  end
+
   class Generator
     include Gem::UserInteraction
 
@@ -32,25 +45,16 @@ module Exefy
     end
 
     def install_executable_stub(target)
-      unless File.executable?(executable)
+      unless File.executable?(Exefy.executable)
         generate_executable
       end
 
       log_message "Creating executable as '#{File.basename(target)}'"
-      FileUtils.install executable, target
-    end
-
-    def executable
-      return @executable if defined?(@executable)
-
-      gem_root     = File.expand_path("../..", __FILE__)
-      ruby_version = RbConfig::CONFIG["ruby_version"]
-
-      @executable = File.join(gem_root, "data", ruby_version, "gemstub.exe")
+      FileUtils.install Exefy.executable, target
     end
 
     def generate_executable
-      log_message "Generating executable '#{executable}'..."
+      log_message "Generating executable '#{Exefy.executable}'..."
 
       gem_root = File.expand_path("../..", __FILE__)
       template = File.join(gem_root, "templates", "gem_exe.c")
@@ -70,9 +74,9 @@ module Exefy
         link([obj, res_obj].join(" "), exe)
 
         # verify target directory first exists
-        FileUtils.mkdir_p File.dirname(executable)
+        FileUtils.mkdir_p File.dirname(Exefy.executable)
 
-        FileUtils.install exe, executable
+        FileUtils.install exe, Exefy.executable
       end
     end
 

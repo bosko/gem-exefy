@@ -43,8 +43,8 @@ Requires a RubyInstaller Ruby installation and the RubyInstaller DevKit.
         end
 
         begin
-          require "devkit" unless options[:revert]
           require "exefy"
+          require "devkit" if !options[:revert] && Exefy.devkit_needed?
         rescue ::LoadError => load_error
           say "You must have DevKit installed in order to exefy gems"
           return
