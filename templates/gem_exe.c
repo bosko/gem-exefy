@@ -81,4 +81,7 @@ main(int argc, char **argv)
       printf("Not enough memory to continue. Exiting...");
     }
   }
+
+  // Return an error when nothing works
+  return -1;
 }
