@@ -15,6 +15,7 @@ Hoe.spec 'gem-exefy' do
   self.require_rubygems_version(">= 1.8.0")
   self.version = Exefy::VERSION
   spec_extras[:platform] = Gem::Platform::CURRENT
+  spec_extras[:required_ruby_version] = ">= 1.9.3"
   self.post_install_message = %Q{**************************************************
 *                                                *
 *  Thank you for installing #{self.name}-#{self.version}!     *
